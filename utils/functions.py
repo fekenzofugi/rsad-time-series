@@ -4,6 +4,7 @@ import requests
 import shutil
 from retry import retry
 
+
 def get_files_info(directory):
     """
     Get information about files in a specified directory.
@@ -48,9 +49,12 @@ def getRequests(params, image, region):
 
 @retry(tries=10, delay=1, backoff=2)
 def getResult(index, point, image, params, id):
+    import re
+
     point = ee.Geometry.Point(point["coordinates"])
     region = point.buffer(params["buffer"]).bounds()
 
+    # Escolhe URL conforme formato
     if params["format"] in ["png", "jpg"]:
         url = image.getThumbURL(
             {
@@ -70,18 +74,36 @@ def getResult(index, point, image, params, id):
             }
         )
 
+    # Define extensão
     if params["format"] == "GEO_TIFF":
         ext = "tif"
     else:
         ext = params["format"]
 
+    # ==============================
+    # 🟩 Extrair a data do ID (ex: 20240901)
+    # ==============================
+    date_match = re.search(r"_(\d{8})T", id)
+    if date_match:
+        date_prefix = date_match.group(1)
+    else:
+        date_prefix = "unknown_date"
+
+    # ==============================
+    # 🟩 Criar nome do arquivo com data na frente
+    # ==============================
+    out_dir = os.path.abspath(params["out_dir"])
+    basename = str(index).zfill(len(str(params["count"])))
+    filename = f"{out_dir}/{date_prefix}_{id}_{params['prefix']}{basename}.{ext}"
+
+    # ==============================
+    # 🟩 Fazer download e salvar
+    # ==============================
     r = requests.get(url, stream=True)
     if r.status_code != 200:
         r.raise_for_status()
 
-    out_dir = os.path.abspath(params["out_dir"])
-    basename = str(index).zfill(len(str(params["count"])))
-    filename = f"{out_dir}/{id}_{params['prefix']}{basename}.{ext}"
     with open(filename, "wb") as out_file:
         shutil.copyfileobj(r.raw, out_file)
-    print("Download Completed: ", id, basename)
+
+    print("Download Completed:", filename)
