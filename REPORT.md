@@ -5,7 +5,7 @@ The use of plastic in agriculture has increased significantly in recent years, b
 
 # 1. Short Review of Methods (December 01 - January 01)
 
-On the search of anomaly detection models to use in agriculture to detect plasticulture subtle changes and pest detection in seedcorn. I've found out the distance mahalanobis metric. But first, what is an anomaly?
+On the search of anomaly detection models to use in agriculture to detect plasticulture subtle changes and pest detection in seedcorn.
 
 ## 1.1 What is an anomaly?
 
@@ -17,11 +17,7 @@ An anomaly = pest attacks in seedcorn fields
 
 Ok, we now know the anomalies of our project, but ```HOW DO WE ACTUALLY DETECT THESE ANOMALIES?``` In order to detect these anomalies, we need a anomaly detection model which is trained on labeled anomalies data. We need to first label these anomalies in the satellite image and then train our model.
 
-## 1.2 Labeling Data
-
-To label the data we're going to use our application Geohuman which was made to accuratly label Sentinel-2 time-series imagery.
-
-## 1.3 Anomaly Detection Model
+## 1.2 Anomaly Detection Model
 An anomaly detection model is a computational method designed to identify patterns that deviate from what is considered normal in a dataset.
 
 In other words, the model learns the typical (baseline) behavior of the system and then flags anything that does not fit that baseline.
@@ -59,86 +55,53 @@ In remote sensing:
 An anomaly detection model learns the normal Sentinel-2 signature of these fields and highlights pixels that deviate from that pattern.
 
 # 2. Anomaly Detection Models (December 01 - March 01)
+I'm researching armyworm pests in the region of Ghana. I'm having a difficult time finding the pattern of the crops through time-series vegetation indexes such as NDVI and EVI. Therefore, a approach that urged is that we use a unsupervised method to classify each pixel and suppose that its a gaussian distribution and the pixels that deviate we associate with different colors, creating a heatmap of the region, with each color indicating its class.
 
 ## 2.1 Pipeline
 <ol>
 <li><strong>Data Preprocessing</strong></li>
+
 <li><strong>Feature extraction</strong>: is the process of transforming raw, high-dimensional data into a more concise and informative set of numerical features</li>
+
 <li><strong>Normal Behavior (Without Pests)</strong>: Define the normal behavior without any anomalies.</li>
-<li><strong>Mahalanobis</strong>:
-For instance, let’s consider a scenario where a research team wants to identify potential pest outbreaks in corn crops using Sentinel-2 satellite time-series. The team collects data on various spectral variables such as vegetation indices, reflectance values across multiple bands, temporal growth patterns, and other environmental indicators derived from the satellite imagery. It then uses Mahalanobis Distance to measure how far each observation in the time-series deviates from the expected multivariate behavior of healthy crops. By doing this, it can identify points in time and space that are significantly different from the normal crop conditions — subtle spectral changes that may indicate early pest attacks or crop stress. This allows the team to detect anomalies rapidly and provide early warnings for targeted interventions in the field.
 
-For each pixel i: 
-
-$$D_i = \sqrt{(X_i - \mu)^T \Sigma^{-1} (X_i - \mu)}$$
-
-Where 
-
-$X_i$ is a single sample (image). A temporal feature vector for a single pixel over time. It contains the values you want to test for anomalies.
-
-$\mu$ is the average of all normal observations.
-
-${X_i - \mu}$ It measures how much the sample deviates from normal conditions.
-
-$\Sigma$ Covariance Matrix captures how the variables co-vary.
-
-$\Sigma^{-1}$: Inverse Covariance Matrix
-
-A deviation along a high-variance direction = less suspicious
-
-A deviation along a low-variance direction = more suspicious
-
-**HIGH D** → strange behavior → possibility for pests
-
-**LOW D** → normal behavior
+<li><strong>Unsupervised Learning pixel-based time-series</strong>:
+1. Normalize the time-series spectral response from the pixels. In that way the climate effects (happens gloabaly) gets reduced and the anomalies (which happens localy) gets preserved in the pixels. That way we can limitate our analysis to anomalies in a single crop field with thw normalized data, increasing the confidence that its anomalies observed are pest-attacks.
+2. Create a time-series feature vector of each pixel.
+3. Make a clustering in unlabeled data.
 </li>
 
 <li><strong>Validation</strong>: Compare the results with our labeled anomalies</li>
 </ol>
 
-## 2.2 Summary
+## 2.2 Unsupervised Learning
 
-It generates an **anomaly map per pixel**, normally called an **Anomaly Score Map** or **Mahalanobis Heatmap**.
+```What is Unsupervised Learning?``` Given a dataset, our training set looks like this
 
-For each Sentinel-2 pixel, the model:
+$${{x^1, x^2, x^3, ...}}$$
 
-1. looks at that pixel's time series
-2. compares it with the learned "normal behavior"
-3. calculates the Mahalanobis distance
-4. if the distance is high → marks as anomaly
-5. if the distance is low → marks as normal
+without a target label. Because we don't have a target label in this method, we're not able to tell the algorithm the 'right answser' y that we want to predict. Instead we're going to ask the algorithm to find some interesting structure about the data. This explains why Jefersson suggested the spatial-temporal approach to detect the pest-attacks.
 
-## 2.3 Applied to Agriculture
+One of the first unsupervised algorithms that we learn is called ```clustering```
 
-### Plasticulture / pest-net
-* Plastic usually reflects in a stable manner
-* If something appears underneath or on top (insect web, etc.) → distorts the pattern → pixel marked as anomaly
+### 2.2.1 What is Clutering?
+Clustering mainly receives a dataset of unlabeled data and try to separate into clusters, which are group of points that are similar to each other.
 
-### Seedcorn / pests
-* Abrupt drop in NDVI
-* Early change in phenology
-* Alteration in photometric pattern → pixels marked as anomaly
+### 2.2.2 K-Means Algorithm
+Randomly initialize K cluster centroids $${{\mu^1, \mu^2, \mu^3, ... , \mu^K}}$$
 
-## 🗺️ What the final map looks like
-
-Imagine a raster with values:
-* **0** = normal
-* **1** = anomaly (regions suspected of pests)
-
-## 2.4 Challenges
-Many studies have revealed the effectiveness of satellite
-images in monitoring crop diseases and insect pests. Unfortu-
-nately, the long revisit period, low spatial resolution, and the
-requirements for clear weather of satellite images hampered
-monitoring the armyworm damage because the armyworm
-would break out in a very short time.
+```
+Repeat{
+    # Assign m sample points to cluster centroids
+    for i = 1 to m:
+        c_i = index of cluster centroid closer to x_i. (distance between two points)
+            Where looking for the c_i = min k ||x_i - u_k||^2, value of k that minimizes
+            the k value.
+    # Move cluster centroids
+    for k = 1 to K:
+        u_k = mean of points assigned to cluster k.
+}
+```
 
 ## References
 https://scijournals.onlinelibrary.wiley.com/doi/pdf/10.1002/ps.6852?utm_source=clarivate&getft_integrator=clarivate
-
-
-
-
-# 3. Application Development (January 01 - March 01)
-
-# 4. Documentation (March 01 - March 30)

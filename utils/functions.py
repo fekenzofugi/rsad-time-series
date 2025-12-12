@@ -87,7 +87,11 @@ def getResult(index, point, image, params, id):
     if date_match:
         date_prefix = date_match.group(1)
     else:
-        date_prefix = "unknown_date"
+        date_match = re.search(r"_(\d{8})_\d{8}_\d{2}_T\d", id)
+        if date_match:
+            date_prefix = date_match.group(1)
+        else:
+            date_prefix = "unknown_date"
 
     # ==============================
     # 🟩 Criar nome do arquivo com data na frente
