@@ -1,4 +1,319 @@
-\documentclass{article}
+\documentclass[12pt]{article}
+\setlength{\parskip}{0.5cm}
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage{titling}
+\usepackage{lmodern}
+\usepackage{ragged2e}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+
 \begin{document}
-A
+
+\begin{titlepage}
+    \centering
+    \begin{figure}
+        \centering
+        \begin{minipage}{0.4\textwidth}
+            \centering
+            \includegraphics[width=0.8\textwidth]{Figures/logo_nipe.png}
+        \end{minipage}
+        \hfill
+        \begin{minipage}{0.3\textwidth}
+            \centering
+            \includegraphics[width=0.8\textwidth]{Figures/unicamp.png}
+        \end{minipage}
+    \end{figure}
+
+    {\Large \textbf{Research Internship Abroad (BEPE/FAPESP)}}\\[1cm]
+
+    {\LARGE \textbf{Remote Sensing Anomaly Detection in Time-Series Imagery and Application Development in the Agricultural Context}}\\[1.5cm]
+
+    {\large Process: 2025/22483-0}\\[0.5cm]
+
+    {\large Final Report: December/01/2025 to March/01/2026 (3 months)}\\[3cm]
+
+    \begin{flushright}
+    {\large \textbf{Brazil Advisor:} Dr. Rubens Augusto Camargo Lamparelli}\\
+    {\large \textbf{UK Supervisor:} Dr. Jefersson Alex dos Santos}\\
+    {\large \textbf{UK Co-Supervisor:} Prof. Po Yang}\\
+    {\large \textbf{Fellow:} Fernando Kenzo Imami Fugihara}\\
+    \end{flushright}
+
+    \vfill
+
+    {\large{Campinas, SP}}\\
+    {\large{2025}}
+\end{titlepage}
+
+\pagenumbering{gobble} % No page numbers on title page
+
+\newpage
+\pagenumbering{arabic} % Start page numbering
+
+\section*{Abstract}
+The use of plastic in agriculture has increased significantly in recent years, 
+bringing both benefits and environmental challenges. While agricultural plastics 
+improve crop yields and resource efficiency, they also lead to the accumulation of 
+plastic waste in rural areas. Remote Sensing (RS) data, combined with advanced 
+machine learning and computer vision techniques, provide an effective means to 
+monitor plasticulture dynamics. Therefore, this research internship aims to explore 
+RS anomaly detection (RSAD) techniques in time-series imagery and apply them to 
+agricultural monitoring, particularly in detecting subtle cases that involve spectral 
+changes such as material deterioration and pest-related disturbances Therefore, I'll 
+join researchers at the University of Sheffield to learn RSAD techniques in the agriculture 
+context and then explore whether they can be applied in plasticulture. In parallel, I'll 
+collaborate with researchers at the University of Sheffield and contribute to the PEZEGO 
+pest-management app. The internship will provide hands-on experience in scalable application 
+design, app optimization, and model integration, which can enhance our ongoing application, 
+GeoHuman. The University of Sheffield was chosen due to its internationally recognized 
+expertise in application development, machine learning, computer vision, and remote sensing. 
+This experience will strengthen our project in Brazil by improving the accuracy and 
+scalability of agricultural monitoring systems. Upon my return, I will disseminate the 
+knowledge gained through workshops and collaborative activities with my research group 
+at UNICAMP to foster innovation and capacity building in remote sensing applications. 
+
+
+This report summarizes the activities and outcomes of the research internship 
+conducted from December 01, 2025 to March 01, 2026. The internship focused on 
+remote sensing anomaly detection in time-series imagery and the development 
+of applications in the agricultural context. Key achievements include the 
+implementation of novel algorithms for anomaly detection, analysis of 
+time-series data.
+
+\break
+
+\section{Introduction}
+
+\section{Methodology}
+
+\subsection{Short Review of Methods (December, 1st - January, 1st)}
+
+In this project the focus is on detecting anomalies on the agricultural fields, in particular,
+the use of pest-net in the plasticulture fields, and the pest-attacks in the crops. Given this
+context, methods of anomaly detection in time-series imagery can be used to detected these 
+devitations. Therefore, a short review of these RSAD methods was made to selected and therefore
+study how to approach this problems.
+
+\subsection{Anomaly Detection Models (December, 1st - March, 1st)}
+
+\subsubsection{Sensors and Study Regions}
+We’ll be using the Harmonized Sentinel-2 (S2) Level-2A surface reflectance images, accessed 
+via Google Earth Engine (GEE) (Google 2023). The Copernicus Sentinel-2 mission features 
+two polar-orbiting satellites (2A and 2B) in a sun-synchronous orbit at an altitude of 
+786 km, phased 180° apart, which enables a 5-day revisit at the equator under cloud-free 
+conditions, extending to 2–3 days at mid-latitudes. 
+
+The study area is located in Mossoró, Rio Grande do Norte, Brazil, where previous field 
+assessments and local expertise provide a solid foundation for this research. The region 
+is particularly notable for its extensive use of plasticulture in melon cultivation, 
+making it a relevant and representative site for analyzing agricultural land-cover 
+dynamics. Additionally, pest-management practices, such as the use of pest nets, are 
+commonly employed to protect melon crops. Field observations conducted by the research 
+team also confirmed that plastic mulch is often reused across multiple cultivation cycles, 
+resulting in areas with visibly deteriorated plastic materials. Figure \ref{fig:study_area_mossoro} illustrates the 
+landscape of the study region.
+
+
+\clearpage 
+\begin{figure}
+    \centering
+    \includegraphics[width=0.9\textwidth]{Figures/study_area_mossoro.png}
+    \caption{Mossoró region of study, Brazil, Rio Grande do Norte.}
+    \label{fig:study_area_mossoro}
+\end{figure}
+
+The second study area is located in Ejura, Ghana, West Africa. The region is 
+characterized by a wide diversity of crops, including plantain, maize, yam, 
+rice, beans, cassava, groundnuts, and watermelon. This agricultural diversity 
+makes Ejura a suitable region for studying and detecting crop anomalies, such 
+as pest attacks. In particular, the region is highly relevant due to the study 
+conducted by Bilintoh et al. (2019), which investigated the impact of Armyworm 
+infestations on crops with field validation. Furthermore, this study area aligns 
+with the objectives of the ongoing Brazil–UK–Africa collaboration known as 
+“SmartPest-Ghana: Exploring LLM-driven mobile solutions for climate-smart 
+pest management in maize farming”, funded by UK Research and Innovation (UKRI). 
+This project represents a recently established short-term partnership between 
+Brazilian and UK research groups and provides a strong contextual and scientific 
+foundation for the selection of Ejura as a study area. 
+Figure \ref{fig:study_area_ejura}, presents the landscape of the Ejura study region.
+
+\clearpage 
+\begin{figure}
+    \centering
+    \includegraphics[width=0.7\textwidth]{Figures/study_area_ejura.png}
+    \caption{Ejura region of study, Ghana, West Africa.}
+    \label{fig:study_area_ejura}
+\end{figure}
+
+\subsubsection{Time-Series}
+
+In this project, we'll be using time-series imagery from Sentinel-2 satallite. Where the atomic
+unit is a single pixel observed through time. In time-series, we have the univariate time-series 
+(UTS) and the multivariate time-series (MTS).
+
+A \textbf{UTS} is a series of data that is based on a single variable (such as NDVI) that changes over time,
+Therefore, the UTS ${X}$ with ${t}$ timestamps (\textbf{for a single pixel}) can be represented as an ordered sequence of 
+data points in the following way (Zamanzadeh Darban et al., 2024):
+
+\[
+X
+= (x_1, x_2,...,x_t)
+\]
+
+Where $x_i$ represents the feature (NDVI) at timestamp $i \in T$ and $T = \{1, 2, \ldots, t\}$.
+
+\[
+X^{(i)} = \left( x^{(i)}_1, x^{(i)}_2, \ldots, x^{(i)}_t \right)
+\]
+
+where $i$ denotes the pixel, $t$ is the number of timestamps, and $x^{(i)}_t$ represents 
+the NDVI value (feature vector) observed at timestamp $t$ for pixel $i$.
+
+A \textbf{MTS} represents multiple variables that are dependent on time, each of which is influenced 
+by both past values (\emph{temporal} dependency) and other variables (dimensions) based on their correlation.
+The correlations between different variables are referred to as spatial dependencies in the literature.
+
+Consider an MTS represented as a sequence of vectors over time, each vector at time $i$, $X_i$, 
+consisting of $d$ dimensions:
+\begin{equation}
+X = (X_1, X_2, \ldots, X_t)
+  = \bigl(
+    (x_1^1, x_1^2, \ldots, x_1^d),
+    (x_2^1, x_2^2, \ldots, x_2^d),
+    \ldots,
+    (x_t^1, x_t^2, \ldots, x_t^d)
+    \bigr)
+\end{equation}
+
+Where $X_i = (x_i^1, x_i^2, \ldots, x_i^d)$ represents a data vector at time $i$, with each $x_i^j$ 
+indicating the observation at time $i$ for the $j$th dimension, and $j = 1, 2, \ldots, d$, where $d$ 
+is the total number of dimensions.
+
+\subsubsection{Interpretation of the Time-Series Representation}
+
+In the adopted formulation, the symbols $x_1, x_2, \ldots, x_T$ represent the temporal evolution of a variable observed at a fixed spatial location. Specifically, for a given pixel $i$, the sequence
+
+\[
+X^{(i)} = \left( x^{(i)}_1, x^{(i)}_2, \ldots, x^{(i)}_t \right)
+\]
+
+corresponds to the NDVI values measured at that pixel across $t$ different timestamps.
+
+Each element $x^{(i)}_t$ denotes the NDVI value of pixel $i$ at timestamp $t$. Therefore, a 
+single pixel gives rise to a univariate time series describing the temporal behavior of 
+vegetation at that specific spatial location.
+
+The index $i$ is used to identify individual pixels. For an image of spatial dimensions 
+$H \times W$, the total number of pixels is given by
+
+\[
+N = H \times W.
+\]
+
+In our analysis the Sentinel-2 imagery has a spatial resolution of $256 \times 256$ pixels, then
+
+\[
+N = 256 \times 256 = 65{,}536
+\]
+
+distinct pixels are present. Consequently, the dataset consists of $65{,}536$ independent univariate time series, one for each pixel, each of length $T$.
+
+Formally, the complete dataset can be expressed as the collection
+
+\[
+\left\{ X^{(1)}, X^{(2)}, \ldots, X^{(N)} \right\},
+\quad \text{with} \quad
+X^{(i)} \in \mathbb{R}^T.
+\]
+
+\subsubsection{Density Estimation}
+
+We're going to model a probability density function (pdf), which gives the probability of
+any given n feature vector. Assuming that $\vec{x}^{(i)}$ are independent from each other,
+we have that
+
+\[
+p(\vec{x})
+= p(x_1;\mu_1,\sigma_1^2)\, p(x_2;\mu_2,\sigma_2^2)\, p(x_3;\mu_3,\sigma_3^2)\, \cdots\, p(x_n;\mu_n,\sigma_n^2)
+\]
+
+\[
+p(\vec{x}) = \prod_{j=1}^{n} p(x_j;\mu_j,\sigma_j^2)
+\]
+
+For tractability, we assume conditional independence across timestamps, although 
+temporal correlations are known to exist.
+
+\subsubsection{Algorithm}
+
+\begin{enumerate}
+\item Choose \( n \) features \( x_i \) that you think might be indicative of anomalous examples.
+In our case, the pixel features that could be an indicative of anomalous are the NDVI and EVI, 
+spectral indexes.
+
+\item Fit parameters \( \mu_1, \ldots, \mu_n, \sigma_1^2, \ldots, \sigma_n^2 \):
+\end{enumerate}
+
+\[
+\mu_j = \frac{1}{m} \sum_{i=1}^{m} x_j^{(i)}
+\]
+
+\[
+\sigma_j^2 = \frac{1}{m} \sum_{i=1}^{m} \left( x_j^{(i)} - \mu_j \right)^2
+\]
+
+\[
+\vec{\mu} = \frac{1}{m} \sum_{i=1}^{m} \vec{x}^{(i)}
+\]
+
+\begin{enumerate}
+\setcounter{enumi}{2}
+\item Given new example \( \vec{x} \), compute \( p(\vec{x}) \):
+\end{enumerate}
+
+\[
+p(\vec{x})
+= \prod_{j=1}^{n} p(x_j; \mu_j, \sigma_j^2)
+= \prod_{j=1}^{n}
+\frac{1}{\sqrt{2\pi}\,\sigma_j}
+\exp\!\left(
+-\frac{(x_j - \mu_j)^2}{2\sigma_j^2}
+\right)
+\]
+
+\[
+\text{Anomaly if } p(\vec{x}) < \varepsilon
+\]
+
+\subsubsection{Generating the Map}
+
+
+\section{Results and Discussion}
+
+\subsection{Spectral Response Behavior}
+\clearpage
+\begin{figure}
+    \centering
+    \includegraphics[width=1\textwidth]{Figures/s2_NDVI_EVI.png}
+    \caption{Sentinel-2 NDVI and EVI time-series from 2017 to 2021 of crops from Ejura region of study.}
+    \label{fig:s2_spectral_response}
+\end{figure}
+
+\clearpage
+\begin{figure}
+    \centering
+    \includegraphics[width=1\textwidth]{Figures/l8_NDVI_EVI.png}
+    \caption{Landsat 8 NDVI and EVI time-series from 2017 to 2021 of crops from Ejura region of study.}
+    \label{fig:l8_spectral_response}
+\end{figure}
+
+
+
+\section{Conclusion}
+
+\section*{References}
+
 \end{document}
