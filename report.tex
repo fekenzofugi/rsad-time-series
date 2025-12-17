@@ -97,9 +97,7 @@ context, methods of anomaly detection in time-series imagery can be used to dete
 devitations. Therefore, a short review of these RSAD methods was made to selected and therefore
 study how to approach this problems.
 
-\subsection{Anomaly Detection Models (December, 1st - March, 1st)}
-
-\subsubsection{Sensors and Study Regions}
+\subsection{Sensors and Study Regions}
 We’ll be using the Harmonized Sentinel-2 (S2) Level-2A surface reflectance images, accessed 
 via Google Earth Engine (GEE) (Google 2023). The Copernicus Sentinel-2 mission features 
 two polar-orbiting satellites (2A and 2B) in a sun-synchronous orbit at an altitude of 
@@ -148,7 +146,7 @@ Figure \ref{fig:study_area_ejura}, presents the landscape of the Ejura study reg
     \label{fig:study_area_ejura}
 \end{figure}
 
-\subsubsection{Time-Series}
+\subsection{Time-Series, Geographical and Phenological Aspects}
 
 In this project, we'll be using time-series imagery from Sentinel-2 satallite. Where the atomic
 unit is a single pixel observed through time. In time-series, we have the univariate time-series 
@@ -164,13 +162,6 @@ X
 \]
 
 Where $x_i$ represents the feature (NDVI) at timestamp $i \in T$ and $T = \{1, 2, \ldots, t\}$.
-
-\[
-X^{(i)} = \left( x^{(i)}_1, x^{(i)}_2, \ldots, x^{(i)}_t \right)
-\]
-
-where $i$ denotes the pixel, $t$ is the number of timestamps, and $x^{(i)}_t$ represents 
-the NDVI value (feature vector) observed at timestamp $t$ for pixel $i$.
 
 A \textbf{MTS} represents multiple variables that are dependent on time, each of which is influenced 
 by both past values (\emph{temporal} dependency) and other variables (dimensions) based on their correlation.
@@ -192,42 +183,186 @@ Where $X_i = (x_i^1, x_i^2, \ldots, x_i^d)$ represents a data vector at time $i$
 indicating the observation at time $i$ for the $j$th dimension, and $j = 1, 2, \ldots, d$, where $d$ 
 is the total number of dimensions.
 
-\subsubsection{Interpretation of the Time-Series Representation}
+\subsubsection{Armyworm Life Cycle}
+When the pest begins and ends its life cycle. How long it lasts.
+Using two-week series considering that the pest lasts 3 months. Test different time windows.
 
-In the adopted formulation, the symbols $x_1, x_2, \ldots, x_T$ represent the temporal evolution of a variable observed at a fixed spatial location. Specifically, for a given pixel $i$, the sequence
+Armyworm entire phenological cycle is from April to September of 2017 (Bilintoh et al., 2019).
+
+\subsubsection{Clustering Time Window}
+A pratical use of this research is to alert to the farmers about a possible pest attack in their
+crops. In order to this, we need a way to detect the pest infestation as quick as possible, for 
+example, let's say that the 
+
+\subsection{Time Series Basic Structure}
+There're four important structure concepts of time-series which are very important to understand
+time-series and its smoothing methods.
+
+\subsubsection{Level}
+It is the average value of the time-series. It can be thought of as the mean of the series.
+
+\subsubsection{Stationary}
+A stationary time-series is a sequence of data where statistical properties of the series do 
+not change over time. In other words, if the mean, variance and covariance of a time series 
+remain constant over time, the series is said to be stationary.
+
+\subsubsection{Trend}
+It is the structure of the long-term increase or decrease of a time series. If there is a trend,
+it is very unlikely that the series will be stationary because the statistics of the periods 
+(mean, standard deviation, etc.) will change in an increasing or decreasing trend.
+
+\subsubsection{Seasonality}
+Seasonality is when a time series repeats a certain behavior at certain intervals. 
+
+\subsubsection{Cycle}
+It contains repetitive patterns similar to seasonality and these two issues can be confused with
+each other. Seasonality can be mapped to specific time periods. It overlaps with structures such 
+as day, week, year, season. For example, markets do more business on weekends or a product gets 
+more attention in winter, etc. The cyclicity takes place in a longer time, in a more uncertain 
+structure, in a way that does not overlap with structures such as day, week, year, season. It 
+occurs mostly for structural reasons, with cyclical changes. For example, it is shaped by the 
+speeches of some people from the business world and the speeches of politicians. Although this i
+s not completely seasonal, it occurs in a certain period, but the period in which it will occur 
+is not clear. 
+
+\subsection{Time-series Smoothing}
+With Jefersson I've got contact with different time-series smoothing methods. Those are very
+useful to extract more information of the series and avoid some common mistakes when analysing
+the data smoothing techniques are kinds of data preprocessing techniques to remove noise from a 
+data set. This allows important patterns to stand out. 
+
+For example, let's say we have two pixels  with different time series responses, where 
+one series in like a sine and the other like a cosine. If we decide to utilize in this series a 
+clustering algorithm which is based on the distance between these values, the difference will 
+be high, but in reality the distance is not that, but because the data is noisy it creates this
+misconception. Therefore, is really important to use time-series smoothing when utilizing time-series.
+
+There are several time-series smoothing techniques such as Moving Average Smoothing, Weighted Average Smoothing, 
+Single Exponential Smoothing (SES), Double Exponential Smoothing (DES), Triple Exponential Smoothing (TES) among others.
+Their use depends on the time-series structure, as presented in Table \ref{tab:t1}.
+
+\begin{table}[h]
+\centering
+\caption{Smoothing Algorithm usecases in different time-series structures}
+\label{tab:t1}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|l|c|c|c|c|}
+\hline
+\textbf{Algorithm} & \textbf{Level} & \textbf{Trend} & \textbf{Seasonality} & \textbf{Tuning Parameters} \\
+\hline
+Single HWES  & Yes & No  & No  & $\alpha$ \\
+Double HWES  & Yes & Yes & No  & $\alpha, \beta$ \\
+Triple HWES  & Yes & Yes & Yes & $\alpha, \beta, \gamma$ \\
+\hline
+\end{tabular}
+\end{table}
+
+The variables used in the smoothing methods are presented in Table \ref{tab:t2}.
+
+\begin{table}[h]
+\centering
+\caption{Variables utilized in the smoothing models}
+\label{tab:t2}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{|c|l|}
+\hline
+\textbf{Symbol} & \textbf{Description} \\
+\hline
+$X$ & Observation \\
+$S$ & Smoothed observation \\
+$B$ & Trend factor \\
+$C$ & Seasonal index \\
+$F$ & The forecast at $m$ periods ahead \\
+$\alpha$ & Data smoothing factor, $\alpha \in (0,1)$ \\
+$\beta$ & Trend smoothing factor, $\beta \in (0,1)$ \\
+$\gamma$ & Seasonal change smoothing factor, $\gamma \in (0,1)$ \\
+$\phi$ & Damped smoothing factor, $\phi \in (0,1)$ \\
+$t$ & The index that denotes a time period \\
+\hline
+\end{tabular}
+\end{table}
+
+
+\subsubsection{Moving Average and Weighted Average Smoothing}
+The future value of a time series is the average of its k previous values. Moving average 
+trading is generally used in practice not for forecasting, but for capturing/observing a trend. 
+However, while deriving features within the scope of machine learning, we are still generating 
+features based on moving averages. Similar to a moving average. Weighted average carries the idea of giving more weight to later observations.
+
+Although this methods are very useful, they cannot be used in our context because they do not
+consider trend and seasonality, which are present in our satelite time-series.
+
+\subsubsection{Single Exponential Smoothing (SES)}
+SES = Level (Unsuccessful if Trend and Seasonality).
+
+It is successful only in stationary series. There should be no trends and seasonality. 
+It can model the level(Level can be thought of as the average of the series.). 
+The effects of the past are weighted on the assumption that "the future is more related 
+to the recent past". SES is suitable for UTS without trend and seasonality, 
+it is successful in stationary series.
 
 \[
-X^{(i)} = \left( x^{(i)}_1, x^{(i)}_2, \ldots, x^{(i)}_t \right)
+S_0 = X_0
 \]
-
-corresponds to the NDVI values measured at that pixel across $t$ different timestamps.
-
-Each element $x^{(i)}_t$ denotes the NDVI value of pixel $i$ at timestamp $t$. Therefore, a 
-single pixel gives rise to a univariate time series describing the temporal behavior of 
-vegetation at that specific spatial location.
-
-The index $i$ is used to identify individual pixels. For an image of spatial dimensions 
-$H \times W$, the total number of pixels is given by
 
 \[
-N = H \times W.
+S_t = \alpha X_t + (1 - \alpha) S_{t-1}
 \]
-
-In our analysis the Sentinel-2 imagery has a spatial resolution of $256 \times 256$ pixels, then
 
 \[
-N = 256 \times 256 = 65{,}536
+\{\, t > 0,\; 0 < \alpha < 1 \,\}
 \]
 
-distinct pixels are present. Consequently, the dataset consists of $65{,}536$ independent univariate time series, one for each pixel, each of length $T$.
 
-Formally, the complete dataset can be expressed as the collection
+\subsubsection{Double Exponential Smoothing (DES)}
+DES = Level (SES) + Trend
+
+The basic approach is the same. In addition to SES, the trend is also taken into account. 
+It is suitable for univariate time series with and without seasonality.
+
+ \[
+\begin{aligned}
+S_0 &= X_0 \\
+B_0 &= X_1 - X_0 \\
+\\
+S_t &= \alpha X_t + (1 - \alpha)(S_{t-1} + B_{t-1}) \\
+B_t &= \beta (S_t - S_{t-1}) + (1 - \beta) B_{t-1} \\
+\\
+\alpha, \beta &\in (0,1)
+\end{aligned}
+\]
+
+
+\subsubsection{Triple Exponential Smoothing (TES)}
+TES = SES + DES + Seasonality
+
+It is the most advanced smoothing method. This method makes predictions by evaluating 
+the effects of level, trend and seasonality dynamically. It can be used in UTS with 
+trend and/or seasonality.
 
 \[
-\left\{ X^{(1)}, X^{(2)}, \ldots, X^{(N)} \right\},
-\quad \text{with} \quad
-X^{(i)} \in \mathbb{R}^T.
+\begin{aligned}
+S_0,\, F_0 &= X_0 \\
+\\
+B_0 &= \frac{\sum_{i=0}^{L-1} \left( X_{L+i} - X_i \right)}{L^2} \\[10pt]
+\\
+S_t &= \alpha \left( X_t - C_{t \bmod L} \right) + (1 - \alpha)\left( S_{t-1} + \phi B_{t-1} \right) \\[6pt]
+\\
+B_t &= \beta \left( S_t - S_{t-1} \right) + (1 - \beta)\phi B_{t-1} \\[6pt]
+\\
+C_{t \bmod L} &= \gamma \left( X_t - S_t \right) + (1 - \gamma) C_{t \bmod L} \\[10pt]
+\\
+F_{t+m} &= S_t + B_t \sum_{i=1}^{m} \phi^{i} + C_{t \bmod L} \\[10pt]
+\\
+\alpha, \beta, \gamma &\in (0,1)
+\end{aligned}
 \]
+
+\subsubsection{Hyperparameter Optimization for TES}
+
+
+
+\subsection{Anomaly Detection Models}
 
 \subsubsection{Density Estimation}
 
@@ -288,32 +423,58 @@ p(\vec{x})
 \text{Anomaly if } p(\vec{x}) < \varepsilon
 \]
 
-\subsubsection{Generating the Map}
+\subsubsection{Algorithm 2}
 
+\begin{enumerate}
+\item Choose \( n \) features \( x_i \) that you think might be indicative of anomalous examples.
+In our case, the pixel features that could be an indicative of anomalous are the NDVI and EVI, 
+spectral indexes.
+
+\item Group pixels exhibiting similar temporal behavior using an clustering.
+Let each pixel $\vec{x}^{(i)}$ be assigned to a cluster $c \in \{1,\ldots,K\}$.
+
+\item For each cluster $c$, estimate the parameters of a Gaussian distribution independently 
+for each feature:
+\end{enumerate}
+
+\[
+\mu_j^{(c)} = \frac{1}{m_c} \sum_{i=1}^{m_c} x_j^{(i)}, \quad
+\sigma_j^{2(c)} = \frac{1}{m_c} \sum_{i=1}^{m_c} \left( x_j^{(i)} - \mu_j^{(c)} \right)^2
+\]
+
+\begin{enumerate}
+\setcounter{enumi}{3}
+\item Given a new example $\vec{x}$ assigned to cluster $c$, compute its likelihood:
+\end{enumerate}
+
+\[
+p(\vec{x} \mid c)
+= \prod_{j=1}^{n} p(x_j; \mu_j^{(c)}, \sigma_j^{2(c)})
+= \prod_{j=1}^{n}
+\frac{1}{\sqrt{2\pi}\,\sigma_j^{(c)}}
+\exp\!\left(
+-\frac{(x_j - \mu_j^{(c)})^2}{2\sigma_j^{2(c)}}
+\right)
+\]
+
+\[
+\text{Anomaly if } p(\vec{x} \mid c) < \varepsilon_c
+\]
 
 \section{Results and Discussion}
-
-\subsection{Spectral Response Behavior}
-\clearpage
-\begin{figure}
-    \centering
-    \includegraphics[width=1\textwidth]{Figures/s2_NDVI_EVI.png}
-    \caption{Sentinel-2 NDVI and EVI time-series from 2017 to 2021 of crops from Ejura region of study.}
-    \label{fig:s2_spectral_response}
-\end{figure}
-
-\clearpage
-\begin{figure}
-    \centering
-    \includegraphics[width=1\textwidth]{Figures/l8_NDVI_EVI.png}
-    \caption{Landsat 8 NDVI and EVI time-series from 2017 to 2021 of crops from Ejura region of study.}
-    \label{fig:l8_spectral_response}
-\end{figure}
-
 
 
 \section{Conclusion}
 
 \section*{References}
+
+\begin{enumerate}
+    \item https://www.kaggle.com/code/furkannakdagg/time-series-smoothing-methods-tutorial
+    \item https://medium.com/@srv96/smoothing-techniques-for-time-series-data-91cccfd008a2
+    \item https://medium.com/codex/introduction-to-time-series-forecasting-smoothing-methods-9a904c00d0fd
+    \item 
+\end{enumerate}
+
+
 
 \end{document}
