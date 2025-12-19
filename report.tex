@@ -85,11 +85,7 @@ time-series data.
 
 \break
 
-\section{Introduction}
-
-\section{Methodology}
-
-\subsection{Short Review of Methods (December, 1st - January, 1st)}
+\section{Short Review of Methods (December, 1st - January, 1st)}
 
 In this project the focus is on detecting anomalies on the agricultural fields, in particular,
 the use of pest-net in the plasticulture fields, and the pest-attacks in the crops. Given this
@@ -97,7 +93,7 @@ context, methods of anomaly detection in time-series imagery can be used to dete
 devitations. Therefore, a short review of these RSAD methods was made to selected and therefore
 study how to approach this problems.
 
-\subsection{Sensors and Study Regions}
+\section{Sensors and Study Regions}
 We’ll be using the Harmonized Sentinel-2 (S2) Level-2A surface reflectance images, accessed 
 via Google Earth Engine (GEE) (Google 2023). The Copernicus Sentinel-2 mission features 
 two polar-orbiting satellites (2A and 2B) in a sun-synchronous orbit at an altitude of 
@@ -146,7 +142,53 @@ Figure \ref{fig:study_area_ejura}, presents the landscape of the Ejura study reg
     \label{fig:study_area_ejura}
 \end{figure}
 
-\subsection{Time-Series, Geographical and Phenological Aspects}
+\section{Spectral Vegetation Indexes}
+Remotely sensed spectral vegetation indices (SVI) are widely used to assess crop health, 
+particularly in detecting impacts of diseases and pest invasions (Zheng et al., 2018). 
+Among these indices, the Normalised Difference Vegetation Index (NDVI), Enhanced Vegetation Index 
+(EVI), Normalised Difference Water Index (NDWI), and Red-edge Chlorophyll Index (RECI) are 
+recognised as significant indicators of crop health and stress 
+(Torgbor et al., 2022, Mudereri et al., 2022, Zheng et al., 2018).
+
+\begin{table}[ht]
+\centering
+\caption{Spectral vegetation indices and corresponding equations using Sentinel-2 bands.}
+\label{tab:veg_indices}
+\renewcommand{\arraystretch}{1.4}
+\small
+\begin{tabular}{p{2.8cm} p{4.8cm} p{3cm} p{2.2cm}}
+\textbf{Indice} & \textbf{Equation} & \textbf{S2 bands} & \textbf{Reference} \\
+
+NDVI & 
+$\text{NDVI} = \frac{NIR - Red}{NIR + Red}$ & 
+$\frac{B8 - B4}{B8 + B4}$ & 
+Rouse et al., 1974 \\
+
+EVI & 
+$\text{EVI} = 2.5 \frac{NIR - R}{NIR + 6R - 7.5B + 1}$ & 
+$\frac{B8 - B4}{B8 + 6B4 - 7.5B2 + 1}$ & 
+Huete et al., 1997 \\
+
+LAI &
+$\text{LAI} = 3.618 \times \text{NDVI} - 0.118$ & 
+$3.618 \times \frac{B8 - B4}{B8 + B4} - 0.118$ & 
+Weiss and Baret, 2016 \\
+\end{tabular}
+\end{table}
+
+
+\section{Armyworm Life Cycle}
+
+\subsection{Clustering Time Window}
+A pratical use of this research is to alert to the farmers about a possible pest attack in their
+crops. In order to this, we need a way to detect the pest infestation as quick as possible and create 
+an alert
+
+
+\section{Spectral reflectance of Fall Armyworm infestation}
+
+
+\section{Time-Series Definition}
 
 In this project, we'll be using time-series imagery from Sentinel-2 satallite. Where the atomic
 unit is a single pixel observed through time. In time-series, we have the univariate time-series 
@@ -183,38 +225,25 @@ Where $X_i = (x_i^1, x_i^2, \ldots, x_i^d)$ represents a data vector at time $i$
 indicating the observation at time $i$ for the $j$th dimension, and $j = 1, 2, \ldots, d$, where $d$ 
 is the total number of dimensions.
 
-\subsubsection{Armyworm Life Cycle}
-When the pest begins and ends its life cycle. How long it lasts.
-Using two-week series considering that the pest lasts 3 months. Test different time windows.
+\section{Time Series Basic Structure}
 
-Armyworm entire phenological cycle is from April to September of 2017 (Bilintoh et al., 2019).
-
-\subsubsection{Clustering Time Window}
-A pratical use of this research is to alert to the farmers about a possible pest attack in their
-crops. In order to this, we need a way to detect the pest infestation as quick as possible, for 
-example, let's say that the 
-
-\subsection{Time Series Basic Structure}
-There're four important structure concepts of time-series which are very important to understand
-time-series and its smoothing methods.
-
-\subsubsection{Level}
+\subsection{Level}
 It is the average value of the time-series. It can be thought of as the mean of the series.
 
-\subsubsection{Stationary}
+\subsection{Stationary}
 A stationary time-series is a sequence of data where statistical properties of the series do 
 not change over time. In other words, if the mean, variance and covariance of a time series 
 remain constant over time, the series is said to be stationary.
 
-\subsubsection{Trend}
+\subsection{Trend}
 It is the structure of the long-term increase or decrease of a time series. If there is a trend,
 it is very unlikely that the series will be stationary because the statistics of the periods 
 (mean, standard deviation, etc.) will change in an increasing or decreasing trend.
 
-\subsubsection{Seasonality}
+\subsection{Seasonality}
 Seasonality is when a time series repeats a certain behavior at certain intervals. 
 
-\subsubsection{Cycle}
+\subsection{Cycle}
 It contains repetitive patterns similar to seasonality and these two issues can be confused with
 each other. Seasonality can be mapped to specific time periods. It overlaps with structures such 
 as day, week, year, season. For example, markets do more business on weekends or a product gets 
@@ -225,7 +254,7 @@ speeches of some people from the business world and the speeches of politicians.
 s not completely seasonal, it occurs in a certain period, but the period in which it will occur 
 is not clear. 
 
-\subsection{Time-series Smoothing}
+\section{Time-series Smoothing}
 With Jefersson I've got contact with different time-series smoothing methods. Those are very
 useful to extract more information of the series and avoid some common mistakes when analysing
 the data smoothing techniques are kinds of data preprocessing techniques to remove noise from a 
@@ -283,7 +312,7 @@ $t$ & The index that denotes a time period \\
 \end{table}
 
 
-\subsubsection{Moving Average and Weighted Average Smoothing}
+\subsection{Moving Average and Weighted Average Smoothing}
 The future value of a time series is the average of its k previous values. Moving average 
 trading is generally used in practice not for forecasting, but for capturing/observing a trend. 
 However, while deriving features within the scope of machine learning, we are still generating 
@@ -292,7 +321,7 @@ features based on moving averages. Similar to a moving average. Weighted average
 Although this methods are very useful, they cannot be used in our context because they do not
 consider trend and seasonality, which are present in our satelite time-series.
 
-\subsubsection{Single Exponential Smoothing (SES)}
+\subsection{Single Exponential Smoothing (SES)}
 SES = Level (Unsuccessful if Trend and Seasonality).
 
 It is successful only in stationary series. There should be no trends and seasonality. 
@@ -314,7 +343,7 @@ S_t = \alpha X_t + (1 - \alpha) S_{t-1}
 \]
 
 
-\subsubsection{Double Exponential Smoothing (DES)}
+\subsection{Double Exponential Smoothing (DES)}
 DES = Level (SES) + Trend
 
 The basic approach is the same. In addition to SES, the trend is also taken into account. 
@@ -333,7 +362,7 @@ B_t &= \beta (S_t - S_{t-1}) + (1 - \beta) B_{t-1} \\
 \]
 
 
-\subsubsection{Triple Exponential Smoothing (TES)}
+\subsection{Triple Exponential Smoothing (TES)}
 TES = SES + DES + Seasonality
 
 It is the most advanced smoothing method. This method makes predictions by evaluating 
@@ -358,13 +387,9 @@ F_{t+m} &= S_t + B_t \sum_{i=1}^{m} \phi^{i} + C_{t \bmod L} \\[10pt]
 \end{aligned}
 \]
 
-\subsubsection{Hyperparameter Optimization for TES}
+\section{Anomaly Detection Models}
 
-
-
-\subsection{Anomaly Detection Models}
-
-\subsubsection{Density Estimation}
+\subsection{Density Estimation}
 
 We're going to model a probability density function (pdf), which gives the probability of
 any given n feature vector. Assuming that $\vec{x}^{(i)}$ are independent from each other,
@@ -382,7 +407,7 @@ p(\vec{x}) = \prod_{j=1}^{n} p(x_j;\mu_j,\sigma_j^2)
 For tractability, we assume conditional independence across timestamps, although 
 temporal correlations are known to exist.
 
-\subsubsection{Algorithm}
+\subsection{Algorithm}
 
 \begin{enumerate}
 \item Choose \( n \) features \( x_i \) that you think might be indicative of anomalous examples.
@@ -423,7 +448,7 @@ p(\vec{x})
 \text{Anomaly if } p(\vec{x}) < \varepsilon
 \]
 
-\subsubsection{Algorithm 2}
+\subsection{Algorithm 2}
 
 \begin{enumerate}
 \item Choose \( n \) features \( x_i \) that you think might be indicative of anomalous examples.
@@ -460,11 +485,13 @@ p(\vec{x} \mid c)
 \[
 \text{Anomaly if } p(\vec{x} \mid c) < \varepsilon_c
 \]
+B8 - carrega a informação da estrutura da folha.
 
-\section{Results and Discussion}
+AZUL E VERMELHO - carrega a informação da clorofila. clorofila absoverve esses dois comprimentos de onda.
+Uma queda nesses nesses dois comprimentos de onda indica que a planta não está realizando fotossintese. Indicando que 
+a lagarta está comendo as folhas da planta.
 
-
-\section{Conclusion}
+B10 - B12 - água, plantas com pragas podem apresentar um defict de água.
 
 \section*{References}
 
@@ -472,7 +499,10 @@ p(\vec{x} \mid c)
     \item https://www.kaggle.com/code/furkannakdagg/time-series-smoothing-methods-tutorial
     \item https://medium.com/@srv96/smoothing-techniques-for-time-series-data-91cccfd008a2
     \item https://medium.com/codex/introduction-to-time-series-forecasting-smoothing-methods-9a904c00d0fd
-    \item 
+    \item https://www.sciencedirect.com/science/article/pii/S1569843225001633\#b0330
+    \item https://www.tandfonline.com/doi/full/10.1080/10106049.2020.1869330\#d1e287
+    \item https://zindi.africa/competitions/makerere-fall-armyworm-crop-challenge/data
+    \item https://link.springer.com/article/10.1007/s11119-021-09845-4
 \end{enumerate}
 
 
