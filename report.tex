@@ -240,47 +240,78 @@ F_{t+m} &= S_t + B_t \sum_{i=1}^{m} \phi^{i} + C_{t \bmod L}, \quad \alpha, \bet
 
 \textbf{Application:} Recommended for Sentinel-2 vegetation index time-series, which exhibit clear seasonal patterns related to crop phenology.
 
+\subsection{Anomalies in Time-Series}
+According to Hawkings et al (1980) an anomaly is a data point or sequence that deviates from 
+the general data distribution. In a time-series dataset, only a small fraction contains anomalies,
+where the majority of the data points follow expected patterns. In remote-sensing data, there is 
+a lot of different informations that deviate from normality, such as sensor noise, atmospheric effects,
+cloud cover, seasonal variations, and landscape complexity (Fu et al., 2025).
+The most meaningful deviations are usually those that are significantly different from the norm.
+
+Anomalies in UTS and MTS can be classified as temporal, intermetric, or 
+temporal-intermetric anomalies (Li et al., 2021).  Temporal anomalies can be compared with either 
+their neighbours (local) or the whole time series (global), and they present different forms 
+depending on their behaviour (Lai et al., 2022).
+In our case, we want to detect pest-related anomalies in agricultural fields, which is a temporal  
+anomaly 
+
+
+\subsubsection{Pest-Related Anomalies}
+
 \section{Methodology}
 
 \subsection{Data and Study Regions}
 This research utilizes Harmonized Sentinel-2 (S2) Level-2A surface reflectance imagery, accessed through Google Earth Engine (GEE). The Copernicus Sentinel-2 mission consists of two polar-orbiting satellites (2A and 2B) operating in sun-synchronous orbit at 786 km altitude, phased 180° apart.
 
 \subsubsection{Mossoró, Rio Grande do Norte, Brazil}
-
+The study area is located in Mossoró, Rio Grande do Norte, Brazil, where previous field 
+assessments and local expertise provide a solid foundation for this research. The region 
+is particularly notable for its extensive use of plasticulture in melon cultivation, making 
+it a relevant and representative site for analyzing agricultural land-cover dynamics. 
+Additionally, pest-management practices, such as the use of pest nets, are commonly e
+mployed to protect melon crops. Field observations conducted by the research team 
+also confirmed that plastic mulch is often reused across multiple cultivation cycles, 
+resulting in areas with visibly deteriorated plastic materials. 
 Figure \ref{fig:study_area_mossoro} illustrates the landscape characteristics of this region.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.6\textwidth]{figures/study_area_mossoro.png}
+    \includegraphics[width=0.8\textwidth]{figures/study_area_mossoro.png}
     \caption{Mossoró study region, Rio Grande do Norte, Brazil, showing plasticulture fields.}
     \label{fig:study_area_mossoro}
 \end{figure}
 
 \subsubsection{Ejura, Ghana, West Africa}
 
-Figure \ref{fig:study_area_ejura} presents the diverse agricultural landscape of Ejura.
+Figure \ref{fig:study_area_ghana} presents the diverse agricultural landscape of Ejura.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.6\textwidth]{figures/study_area_ejura.png}
+    \includegraphics[width=1\textwidth]{figures/study_area_ghana.png}
     \caption{Ejura study region, Ghana, West Africa, showing diverse crop systems.}
-    \label{fig:study_area_ejura}
+    \label{fig:study_area_ghana}
 \end{figure}
 
 \subsubsection{Kurnool and Gadwal Districts, Southern India}
 
-Figure \ref{fig:study_area_india} shows the agricultural landscape characteristics of these districts.
+Prabhakar et al. (2022) conducted field surveys in Kurnool and Gadwal districts of 
+Southern India to map FAW infestations in maize crops (sorghum). In his field surveys,
+he mapped the regions as healthy, low, medium, and severe infestation levels. Based on that,
+we selected one field classified as severe infestation for our proof of concept. The Prabhakar 
+et al. (2022) field survey confirmed that the FAW infestation occurred between October 26, 2018 and
+November 15, 2018. Figure \ref{fig:study_area_india} shows the agricultural 
+landscape characteristics of these districts.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.6\textwidth]{figures/study_area_india.png}
+    \includegraphics[width=1\textwidth]{figures/study_area_india.png}
     \caption{Kurnool and Gadwal districts, Southern India, showing maize cultivation areas.}
     \label{fig:study_area_india}
 \end{figure}
 
 \subsection{Preprocessing Sentinel-2 Imagery}
-For each study region, Sentinel-2 images were filtered by date range and 
-cloud cover percentage.
+Preprocessing is a crucial step in machine learning and data pipelines (Tawakuli et al., 2025). It employs various techniques to ensure that the data fed into a model is clean, consistent, and informative, which directly influences its performance and reliability (Zheng et al., 2021). This is especially important in RSAD modeling. In RS imagery, data quality can be compromised by factors such as Earth's geometric effects resulting from its curvature and rotation, atmospheric conditions like cloud cover, sensor noise, seasonal variations, and landscape complexity (Fu et al., 2025).
+
 
 \subsection{Spectral Indices}
 
@@ -307,8 +338,13 @@ Mudereri et al., 2022
 \end{tabular}
 \end{table}
 
-\subsubsection{Vegetation Health Indices}
-Table \ref{tab:veg_indices} presents the spectral indices used in this study, along with their mathematical formulations and corresponding Sentinel-2 band combinations.
+\subsubsection{Vegetation Indices}
+
+Studies from Dzurune et al. (2025), Bilintoh et al. (2019), Prabhakar et al. (2022), 
+have demostrated the effectiveness of Normalized Difference Vegetation Index (NDVI)
+Enhanced Vegetation Index (EVI) and Leaf Area Index (LAI), respectively, in detecting 
+pest infestations. Table \ref{tab:veg_indices} presents the spectral indices used in 
+this research, along with their mathematical formulations.
 
 \begin{table}[ht]
 \centering
@@ -319,32 +355,50 @@ Table \ref{tab:veg_indices} presents the spectral indices used in this study, al
 \begin{tabular}{p{5cm} p{5cm} p{5cm}}
 \textbf{Index} & \textbf{Equation} & \textbf{Reference} \\
 \hline
-Normalized Difference Vegetation Index (NDVI) & 
+NDVI & 
 $\frac{NIR - Red}{NIR + Red}$ & 
 Rouse et al., 1974 \\
 
-Enhanced Vegetation Index (EVI) & 
+EVI & 
 $2.5 \frac{NIR - R}{NIR + 6R - 7.5B + 1}$ & 
 Huete et al., 1997 \\
 
-Leaf Area Index (LAI) &
-$3.618 \times \text{NDVI} - 0.118$ & 
-Weiss and Baret, 2016 \\
+LAI &
+$3.618 \times \text{EVI} - 0.118$ & 
+Boegh et al., 2002 \\
 \end{tabular}
 \end{table}
 
-The pest infestation detection model identifies anomalies in vegetation time-series by 
-detecting significant NDVI decreases that may indicate pest attacks. The model computes 
-the rate of change in NDVI values and flags temporal windows where the decline exceeds a 
-predefined threshold, returning the onset date of the potential infestation event.
-
 \subsection{Time-Series Representation and Smoothing}
-In this study, we used a 
+In this study, we used a Multivariate Time-Series (MTS) representation, where each field 
+is represented by multiple spectral indices (NDVI, LAI) over time. This approach captures 
+both temporal dynamics and inter-index relationships. Given a field observed over $t$ timestamps,
+each vector at time $i$, $X_i$, contains $2$ features (spectral indices):
 
+\begin{equation}
+X = (X_1, X_2, \ldots, X_t)
+  = \bigl(
+    (x_1^1, x_1^2),
+    (x_2^1, x_2^2),
+    \ldots,
+    (x_t^1, x_t^2)
+    \bigr)
+\end{equation}
+
+Where $X_i = (x_i^1, x_i^2)$ represents the feature vector at time $i$, 
+with $x_i^1$ as NDVI and $x_i^2$ as LAI.
+
+As for smoothing the time-series, we applied Triple Exponential Smoothing (TES) / Holt-Winters,
+which effectively models level, trend, and seasonality components present in agricultural
+satellite time-series.
 
 \subsection{Proposed anomaly detection model}
+We are proposing a AD time-series model that can detect peset infestations in agricultural
+fields using Sentinel-2 imagery. 
 
 \subsubsection{Problem Formulation}
+
+
 
 \subsubsection{Baseline Time-Series Modeling}
 
@@ -359,11 +413,53 @@ In this study, we used a
 \subsection{Proof of Concept: Plastic deterioration detection in Mossoró with Sentinel-2} 
 
 \subsection{Proof of Concept: FAW infestation detection in Southern India with Sentinel-2}
+To validate wheather S2 time-series can capture FAW infestation,
+we followed the methodology proposed by Prabhakar et al. (2022) which analyzed S2
+time-series to detect FAW infestation in maize crops in Southern India. Prabhakar et al.
+(2022) utilized ground truth data from field surveys to classify infestation severity
+levels (healthy, mild, moderate, severe) and correlated these with spectral signatures
+and vegetation index time-series derived from S2 imagery. In its field surveys, Prabhakar et al.
+(2022) mapped FAW infestation dated from October 26, 2018 to November 15, 2018, these dates and
+a severe field were selected for our proof of concept.
+
 
 \subsubsection{Spectral Signatures of Pest Infestation}
-Figure \ref{fig:india_spectral_severity_classification} illustrates the spectral 
-signatures associated with varying severity levels of FAW infestation in Southern India.
 
+Based on the severity classification framework proposed by Prabhakar et al. (2022), 
+FAW damage is categorized into four levels: healthy (Grade-1), low (Grade-2), medium 
+(Grade-3), and severe (Grade-4) infestation. In our study, we used the severe cases of the
+Prabhakar et al. (2022) field survey data available only at two key moments: 
+a pre-infestation survey, representing healthy crop conditions, and a post-infestation survey,
+corresponding to severe FAW damage. 
+These two surveys were used as temporal anchors to characterize the spectral response 
+of maize crops before and after the pest outbreak. Figure 
+\ref{fig:india_spectral_response_before_after_infestation} illustrates the contrast 
+between pre-attack and post-attack conditions, highlighting notable changes in reflectance 
+patterns associated with vegetation stress caused by FAW infestation.
+
+\clearpage
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{figures/india_spectral_response_before_after_infestation.png}
+    \caption{Spectral response of maize crops before and after Fall Armyworm infestation in Southern India.}
+    \label{fig:india_spectral_response_before_after_infestation}
+\end{figure}
+
+
+However, ground-truth severity assessments were not available for the intermediate 
+observation dates within the study period. To address this limitation, we adopted a 
+temporal interpolation strategy using the available pre- and post-infestation field 
+observations. For dates falling between these two assessment points, infestation 
+severity was classified into two intermediate levels: low and medium, 
+based on their temporal position in the time series and the magnitude 
+of spectral changes observed in the satellite imagery. This approach assumes a 
+gradual intensification of FAW damage over time and enables the representation 
+of the dynamic evolution of infestation across the growing season, despite the 
+absence of continuous ground-based severity monitoring. The resulting spectral 
+signatures associated with each severity level are presented in Figure 
+\ref{fig:india_spectral_severity_classification}.
+
+\clearpage
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{figures/india_spectral_severity_classification.png}
@@ -381,8 +477,16 @@ Pest-damaged plants often exhibit water stress, detectable in these bands.
 
 Harvest events cause abrupt transitions from high NDVI (green, healthy) to low NDVI 
 (senescence, yellow/brown), which must be distinguished from pest-related declines.
-Pest-related
+Pest-related NDVI declines are more gradual and associated with specific temporal patterns
+linked to pest life cycles and feeding behavior.
 
+\subsubsection{Time-Series Vegetation Indexes Analysis}
+
+Figures \ref{fig:india_ndvi_time_series_comparison} and \ref{fig:india_lai_time_series_comparison} 
+present the mean NDVI and LAI time-series comparisons between FAW-infested and healthy maize crops in Southern India.
+We observe on both plots that the FAW-infested field exibits a significant decline in NDVI and LAI values.
+Because NDVI and LAI are indicators of biomass, this decline reflects the damage caused by FAW feeding on the maize plants,
+leading to reduced leaf area and overall plant health.
 
 \begin{figure}[H]
     \centering
@@ -393,28 +497,53 @@ Pest-related
 
 \begin{figure}[H]
     \centering
+    \includegraphics[width=1\textwidth]{figures/india_lai_time_series_comparison.png}
+    \caption{Mean LAI time series comparison between FAW-infested and healthy maize crops in Southern India.}
+    \label{fig:india_lai_time_series_comparison}
+\end{figure}
+
+Figures \ref{fig:india_ndvi_time_series_maps} and \ref{fig:india_lai_time_series_maps} 
+show the NDVI and LAI time-series maps of the FAW-infested field in Southern India. 
+In both figures, we observe a clear temporal decline in NDVI and LAI values across the field,
+corresponding to the period of FAW infestation. The spatial patterns in these maps highlight    
+the extent and severity of the damage caused by the pest, with lower index values indicating
+areas of more severe infestation and biomass loss.
+
+\begin{figure}[H]
+    \centering
     \includegraphics[width=1\textwidth]{figures/india_ndvi_time_series_maps.png}
-    \caption{Mean NDVI time series comparison between FAW-infested and healthy maize crops in Southern India.}
+    \caption{NDVI time series of FAW-infested in Southern India.}
     \label{fig:india_ndvi_time_series_maps}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=1\textwidth]{figures/india_ndvi_time_series_maps_healthy.png}
-    \caption{Mean NDVI time series comparison between FAW-infested and healthy maize crops in Southern India.}
-    \label{fig:india_ndvi_time_series_maps_healthy}
-
+    \includegraphics[width=1\textwidth]{figures/india_lai_time_series_maps.png}
+    \caption{LAI time series of FAW-infested in Southern India.}
+    \label{fig:india_lai_time_series_maps}
 \end{figure}
 
+We can extend the result to more dates. Figure
+
+
+
 \subsubsection{Temporal Anomaly Detection}
+
+\clearpage
+
+\section{Conclusion and Future Work}
 
 \clearpage
 
 \section*{References}
 
 \begin{enumerate}
-    \item Bilintoh, T.M., et al. (2019). Impact of Armyworm infestations on crops in Ghana: Field validation study.
+    \item Boegh, E., S\o gaard, H., Broge, N. H., Hasager, C. B., Jensen, N. O., Schelde, K., \& Thomsen, A. (2002). 
+    Airborne multispectral data for quantifying leaf area index, nitrogen concentration, and photosynthetic efficiency 
+    in agriculture. Remote Sensing of Environment, 81(2–3), 179–193. https://doi.org/10.1016/S0034-4257(01)00342-X
     
+    \item Bilintoh, T.M., et al. (2019). Impact of Armyworm infestations on crops in Ghana: Field validation study.
+
     \item Huete, A., et al. (1997). Overview of the radiometric and biophysical performance of the MODIS vegetation indices. \textit{Remote Sensing of Environment}.
     
     \item Mudereri, B.T., et al. (2022). Application of remote sensing indices for crop health assessment. \textit{Journal of Agricultural Science}.
@@ -428,6 +557,7 @@ Pest-related
     \item Zamanzadeh Darban, Z., et al. (2024). Time series anomaly detection: Methods and applications. \textit{Pattern Recognition}.
     
     \item Zheng, Q., et al. (2018). A review of remote sensing applications in pest and disease detection. \textit{Computers and Electronics in Agriculture}.
+    
 \end{enumerate}
 
 \subsection*{Online Resources}
