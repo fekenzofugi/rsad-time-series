@@ -254,8 +254,11 @@ depending on their behaviour (Lai et al., 2022).
 \subsubsection{Pest-Related Anomalies}
 
 
-\paragraph{Biology of Fall Armyworm (Spodoptera frugiperda) }
-
+\paragraph{Lifecycle and Biology of FAW }
+The 2018 survey in Ghana showed that of the farmers who had experienced FAW in
+their fields, 57\% and 43\% reported attack occurring in the early and mid-stages of the crops. However,
+few farmers reported presence of FAW in the later stages of the crop. Figure \ref{fig:armyworm_on_corn},
+shows FAW attacks in different stages of the maize crop.
 
 \begin{figure}[H]
     \centering
@@ -264,10 +267,25 @@ depending on their behaviour (Lai et al., 2022).
     \label{fig:armyworm_on_corn}
 \end{figure}
 
+On maize young FAW larvae usually feed on leaves, creating a characteristic windowing and holed
+effect. This and moist sawdust-like frass mostly in form of lumps, near the funnel and upper leaves,
+gives farmers easily spotted signs of larval feeding. Older larvae stay inside the funnel, feeding mostly
+during the night, and many farmers are now aware that the funnel can be opened to reveal the
+caterpillar for handpicking and crushing as a control method.   
+
 \paragraph{Infestation Period}
-Fall Armyworm (FAW) infestations typically occur during specific periods of the crop growth cycle,
-often coinciding with the vegetative and early reproductive stages when the larvae have ample
-foliage to feed on. 
+Ghana’s climate is characterized by a strong seasonal cycle that directly affects both crop development and the usability of
+optical remote sensing data. In the southern and central parts of the country, two main seasons are observed: a major rainy season 
+(approximately April–July) and a minor rainy season
+(September–October), separated by relatively drier periods. During the major rainy season, persistent cloud cover is common,
+often resulting in near-continuous cloudiness at the time of peak vegetation growth. This poses a significant challenge for
+optical satellite sensors such as Sentinel-2, as cloud contamination and cloud-shadow masking can severely reduce the 
+availability of valid surface reflectance observations. Coincidentally, this period also overlaps with the main maize 
+growing season, during which Fall Armyworm (Spodoptera frugiperda) infestations typically peak between June and July, 
+when crops are at the vegetative and early reproductive stages most vulnerable to defoliation. As a result, the period 
+of greatest agronomic relevance for detecting armyworm-induced stress is also the period with the poorest optical data 
+availability. This seasonal coupling between rainfall, cloud cover, and pest dynamics highlights a key limitation of 
+optical remote sensing in Ghana.
 
 \section{Methodology}
 Figure \ref{fig:abstract} illustrates the conceptual framework of FAW infestation detection. We first detect the anomaly in S2 time-series 
@@ -414,16 +432,8 @@ which effectively models level, trend, and seasonality components present in agr
 satellite time-series.
 
 \subsection{Proposed anomaly detection model}
-We are proposing a AD time-series model that can detect peset infestations in agricultural
+We are proposing a AD time-series model that can detect pest infestations in agricultural
 fields using Sentinel-2 imagery. 
-
-\subsubsection{Problem Formulation}
-
-
-
-\subsubsection{Baseline Time-Series Modeling}
-
-\subsubsection{Anomaly Scoring}
 
 \subsection{Evaluation Metrics}
 
@@ -545,13 +555,18 @@ areas of more severe infestation and biomass loss.
 We can extend the result to more dates, in periods before and after the infestation event, to
 observe the full phenological cycle of the maize crop. Figure 
 
+\subsection{Proof of Concept: FAW infestation detection in Ghana with Sentinel-2}
 
 
-\subsubsection{Temporal Anomaly Detection}
+\subsection{Anomaly Detection}
+
+
+\subsection{Alerts}
+
 
 \clearpage
 
-\section{Conclusion and Future Work}
+\section{Conclusion}
 
 \clearpage
 
