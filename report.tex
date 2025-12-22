@@ -66,14 +66,12 @@ analysis fundamentals, anomaly detection algorithms.
 
 \section{Introduction}
 
-\subsection{Research Context and Objectives}
+\subsection{Objectives}
 This research internship focuses on the detection of anomalies in agricultural
 systems using time-series analysis of Sentinel-2 satellite imagery. The primary
 objectives are:
 
 \begin{itemize}
-    \item \textbf{Proof of Concept:} Verify if its possible to detect pest-net installations in plasticulture 
-    systems in Mossoró, Brazil, using time-series analysis of Sentinel-2 imagery.
     \item \textbf{Proof of Concept:} Verify if its possible to detect pest infestations, such as Fall Armyworm
     (Spodoptera frugiperda) in maize crops, using time-series analysis of Sentinel-2 imagery.
     \item \textbf{Algorithm Development:} Model anomaly detection algorithms capable of 
@@ -252,13 +250,36 @@ Anomalies in UTS and MTS can be classified as temporal, intermetric, or
 temporal-intermetric anomalies (Li et al., 2021).  Temporal anomalies can be compared with either 
 their neighbours (local) or the whole time series (global), and they present different forms 
 depending on their behaviour (Lai et al., 2022).
-In our case, we want to detect pest-related anomalies in agricultural fields, which is a temporal  
-anomaly 
-
 
 \subsubsection{Pest-Related Anomalies}
 
+
+\paragraph{Biology of Fall Armyworm (Spodoptera frugiperda) }
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{figures/armyworm_on_corn.png}
+    \caption{Fall Armyworm (Spodoptera frugiperda) larvae on maize leaves.}
+    \label{fig:armyworm_on_corn}
+\end{figure}
+
+\paragraph{Infestation Period}
+Fall Armyworm (FAW) infestations typically occur during specific periods of the crop growth cycle,
+often coinciding with the vegetative and early reproductive stages when the larvae have ample
+foliage to feed on. 
+
 \section{Methodology}
+Figure \ref{fig:abstract} illustrates the conceptual framework of FAW infestation detection. We first detect the anomaly in S2 time-series 
+(FAW infestation), then we model an anomaly detection algorithm to identify such events, and 
+finally we can create alerts for farmers to take action.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{figures/overview.png}
+    \caption{Conceptual framework of FAW infestation detection using Sentinel-2 time-series analysis.}
+    \label{fig:abstract}
+\end{figure}
 
 \subsection{Data and Study Regions}
 This research utilizes Harmonized Sentinel-2 (S2) Level-2A surface reflectance imagery, accessed through Google Earth Engine (GEE). The Copernicus Sentinel-2 mission consists of two polar-orbiting satellites (2A and 2B) operating in sun-synchronous orbit at 786 km altitude, phased 180° apart.
@@ -410,8 +431,6 @@ fields using Sentinel-2 imagery.
 
 \section{Results and Discussion}
 
-\subsection{Proof of Concept: Plastic deterioration detection in Mossoró with Sentinel-2} 
-
 \subsection{Proof of Concept: FAW infestation detection in Southern India with Sentinel-2}
 To validate wheather S2 time-series can capture FAW infestation,
 we followed the methodology proposed by Prabhakar et al. (2022) which analyzed S2
@@ -523,7 +542,8 @@ areas of more severe infestation and biomass loss.
     \label{fig:india_lai_time_series_maps}
 \end{figure}
 
-We can extend the result to more dates. Figure
+We can extend the result to more dates, in periods before and after the infestation event, to
+observe the full phenological cycle of the maize crop. Figure 
 
 
 
